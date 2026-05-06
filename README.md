@@ -30,8 +30,8 @@ A cloud platform for testing system reliability, failure recovery, and observabi
 - Metrics collection
 
 ## Deployment checklist
-1. Build FastAPI service
-2. Containerize with Docker
+1. Build FastAPI service - done
+2. Containerize with Docker - done
 3. Provision Azure infrastructure with Terraform
 4. Deploy AKS cluster
 5. Deploy application via Kubernetes
