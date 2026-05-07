@@ -1,0 +1,43 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to ACR
+        uses: azure/docker-login@v2
+        with:
+          login-server: ericratz.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ericratz.azurecr.io/crp:${{ github.sha }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ericratz.azurecr.io/crp:${{ github.sha }}
+
+      - name: Set AKS context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: cloud-reliability-rg
+          cluster-name: cloud-reliability-aks
+
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/crp \
+            crp=ericratz.azurecr.io/crp:${{ github.sha }}
+
+      - name: Verify rollout
+        run: |
+          kubectl rollout status deployment/crp

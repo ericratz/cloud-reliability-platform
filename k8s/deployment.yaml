@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crp
+  template:
+    metadata:
+      labels:
+        app: crp
+    spec:
+      containers:
+        - name: crp
+          image: ericratz.azurecr.io/crp:${{ github.sha }}
+          ports:
+            - containerPort: 8000
