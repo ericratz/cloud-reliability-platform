@@ -20,11 +20,7 @@ jobs:
 
       #login docker to acr
       - name: Login to ACR
-        uses: azure/docker-login@v2
-        with:
-          login-server: ericratz.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+        run: az acr login --name ericratz
 
       #build docker image
       - name: Build Docker image
