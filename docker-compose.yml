@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    container_name: crp-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus
+    container_name: crp-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./app/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  
+  grafana:
+    image: grafana/grafana
+    container_name: crp-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus

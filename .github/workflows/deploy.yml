@@ -29,12 +29,12 @@ jobs:
       #build docker image
       - name: Build Docker image
         run: |
-          docker build -t ericratz.azurecr.io/crp:${{ github.sha }} .
+          docker build -t ericratz.azurecr.io/crp:latest .
 
       #push image to acr
       - name: Push Docker image
         run: |
-          docker push ericratz.azurecr.io/crp:${{ github.sha }}
+          docker push ericratz.azurecr.io/crp:latest
 
       #connect kubectl to aks
       - name: Set AKS context
@@ -43,11 +43,16 @@ jobs:
           resource-group: cloud-reliability-rg
           cluster-name: cloud-reliability-aks
 
+      #apply kubernetes manifests
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/
+
       #update kubernetes deployment image
       - name: Update deployment image
         run: |
           kubectl set image deployment/crp \
-            crp=ericratz.azurecr.io/crp:${{ github.sha }}
+            crp=ericratz.azurecr.io/crp:latest
 
       #wait for deployment rollout
       - name: Verify rollout

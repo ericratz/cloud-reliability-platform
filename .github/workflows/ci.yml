@@ -23,4 +23,4 @@ jobs:
 
       - name: Run FastAPI import test
         run: |
-          python -c "import main; print('App imports successfully')"
+          python -c "from app.core.api import app; print('App imports successfully')"

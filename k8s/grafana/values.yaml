@@ -1,0 +1,46 @@
+adminPassword: admin
+
+service:
+  type: ClusterIP
+
+persistence:
+  enabled: false
+
+#prometheus datasource
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-server.default.svc.cluster.local:80
+        isDefault: true
+
+#sidecar: dashboard discovery
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    searchNamespace: ALL
+    folder: /var/lib/grafana/dashboards
+    provider:
+      foldersFromFilesStructure: true
+
+#grafana dashboard provider
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards

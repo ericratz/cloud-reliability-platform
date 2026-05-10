@@ -2,10 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: crp
+  labels:
+    app: crp
 spec:
-  type: LoadBalancer
   selector:
     app: crp
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 8000
+  type: LoadBalancer

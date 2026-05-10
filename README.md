@@ -1,69 +1,49 @@
-# Cloud Reliability Platform - 50% complete
+# Cloud Reliability Platform - 75% Complete
 
-A cloud platform for testing system reliability, failure recovery, and observability under realistic production conditions.
+A cloud-native platform for testing system reliability, failure recovery, and observability under production-like conditions using Kubernetes on Azure. Simulates real-world distributed system behavior and validate reliability through metrics, SLOs, and controlled failure scenarios.
 
 ## Stack
-- FastAPI (application/API service)
-- Docker (container)
-- Terraform (IaC)
-- Azure Kubernetes Service (AKS)
-- Azure Container Registry (ACR)
-- GitHub Actions (CI/CD automation)
-- kubectl - Kubernetes deplyment operations
+- FastAPI - core API service
+- Docker - containerization
+- Kubernetes (AKS) - orchestration layer 
+- Terraform - infrastructure as code (Azure)
+- Azure Container Registry (ACR) - image registry
+- Azure Kubernetes Service (AKS) - cluster runtime
+- GitHub Actions - CI/CD automation
+- Prometheus - metrics collection
+- Grafana - dashboards and visualization
+- kubectl - cluster operations and debugging
 
 ## System Design
 - FastAPI service runs in Docker containers.
 - Containers are built and pushed to ACR.
 - AKS pulls images from ACR and runs the application.
-- Terraform provisions all Azure infrastructure.
+- Terraform provisions Azure infrastructure.
 - GitHub Actions handles build, push, deployment automation.
+- Prometheus scrapes metrics from Kubernetes.
+- Grafana visualizes SLOs, latency, and error rates.
 
-## SLOs
-- Service availability tracking with success/error rate
-- Latency targets
-- Health endpoint monitoring
+## SLOs (Service Level Objectives)
+- Service availability
+- Error rate (5xx tracking)
+- p95 latency
 
-## Reliability Design
-- Kubernetes restart policies for failed containers
-- Liveness probes
+## Reliability Design (In Progress)
+- Kubernetes restart policies for failure recovery
+- Liveness/readiness probes
 - Controlled failure injection endpoints
 - Horizontal scaling via AKS
-- Rolling updates for zero-downtime deployments
+- Rolling deployments for zero-downtime updates
+- Load testing scripts
 
-## Observability
+## Observability (In Progress)
+- Prometheus for metrics - done
+- Grafana for metric visualization - done
 - Structured JSON logging
 - Request IDs for tracing
 - Kubernetes logs
-- Metrics collection
+- Loki log aggregation
 
-## Terraform
-- Azure Resource Group
-- Azure Kubernetes Service
-- Azure Container Registry
-- Role Assignment
-
-## Kubernetes Deployment
-Apply manifests, update image (CI/CD), expose service:
-```bash
-kubectl apply -f k8s/
-kubectl set image deployment/crp crp=ericratz.azurecr.io/crp:<tag>
-kubectl get svc
-```
-
-## Deployment checklist
-1. Build FastAPI service - done
-2. Containerize with Docker - done
-3. GitHub Actions CI setup - done
-4. Provision Azure infrastructure (Terraform) - done
-5. Deploy AKS cluster - done
-6. Deploy application via Kubernetes - done
-7. Configure CI/CD pipeline - done
-8. Automate deployments via kubectl/GitHub Actions - done
-9. Validate SLOs, observability, and failure scenarios (todo)
-
-## Lessons Learned
-- Azure AKS region + VM SKU availability matters (e.g., westus3 vs westus2 issues)
-- ACR requires authentication for Kubernetes image pulls
-- Terraform state must be respected (don’t delete Azure manually mid-state)
-- Kubernetes uses rolling updates when image tags change
-- ImagePullBackOff usually = auth or registry access issue, not build issue
+## CI/CD
+- CI: Python env setup, dependency installation, FastAPI import validation
+- CD: Docker image build, push to ACR, Kubernetes deployment, rolling update verification

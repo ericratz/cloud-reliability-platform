@@ -1,7 +1,12 @@
+#python
 .venv/
 __pycache__/
 *.pyc
+.pytest_cache/
 .env
+
+#terraform
 .terraform/
 *.tfstate
 *.tfstate.*
+
