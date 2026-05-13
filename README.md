@@ -32,7 +32,7 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - /slo - current SLO snapshot (availability, 500 errors, p95 latency)
 - /reliability/status - shows current injection state
 - POST /reliability/toggle-latency - injects 500ms latency
-- POST /reliability/toggle-errors - injects error log message on all requests
+- POST /reliability/toggle-errors - injects 500 errors on all non-reliability requests
 - POST /reliability/trigger-error - injects one 500 error
 - /docs - Swagger UI
 
@@ -54,6 +54,7 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - Loki log aggregation with Promtail on all cluster nodes
 - Grafana dashboard for SLO and log visualization
 - Structured JSON logging on each request
+- View dashboards: kubectl port-forward svc/grafana 3000:80
 
 ## CI/CD
 - CI: Python env setup, dependency installation, FastAPI import validation
