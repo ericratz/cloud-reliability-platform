@@ -27,6 +27,7 @@ spec:
         - name: crp
 
           image: ericratz.azurecr.io/crp:latest
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 8000
