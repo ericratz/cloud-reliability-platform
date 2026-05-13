@@ -1,22 +1,36 @@
 import time
+import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
+from starlette.responses import JSONResponse
+from app.observability.metrics import REQUEST_COUNT, REQUEST_LATENCY, ERROR_COUNT
+from app.observability.logger import get_logger
+from app.reliability.state import state
 
-from app.observability.metrics import (
-    REQUEST_COUNT,
-    REQUEST_LATENCY,
-    ERROR_COUNT,
-)
+logger = get_logger("crp.request")
+
+SKIP_INJECTION = {
+    "/metrics",
+    "/reliability/toggle-latency",
+    "/reliability/toggle-errors",
+    "/reliability/status"
+}
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         start = time.time()
-
         endpoint = request.url.path
         method = request.method
         status_code = 500
 
         try:
+            if endpoint not in SKIP_INJECTION:
+                if state.errors_enabled:
+                    status_code = 500
+                    return JSONResponse({"detail": "injected error"}, status_code=500)
+                if state.latency_enabled:
+                    await asyncio.sleep(state.latency_ms / 1000)
+
             response = await call_next(request)
             status_code = response.status_code
             return response
@@ -31,22 +45,20 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
         finally:
             duration = time.time() - start
 
-            #latency
+            logger.info("request", extra={
+                "method": method,
+                "endpoint": endpoint,
+                "status": status_code,
+                "duration_ms": round(duration * 1000, 2),
+            })
+
             try:
-                REQUEST_LATENCY.labels(
-                    endpoint=endpoint,
-                    status=str(status_code)
-                ).observe(duration)
+                REQUEST_LATENCY.labels(endpoint=endpoint, status=str(status_code)).observe(duration)
             except Exception:
                 pass
 
-            #request counter
             try:
-                REQUEST_COUNT.labels(
-                    method=method,
-                    endpoint=endpoint,
-                    status=str(status_code),
-                ).inc()
+                REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=str(status_code)).inc()
             except Exception:
                 pass
 

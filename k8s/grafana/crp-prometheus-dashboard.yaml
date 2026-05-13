@@ -11,14 +11,16 @@ data:
       "uid": "crp-overview",
       "title": "CRP Observability",
       "schemaVersion": 38,
-      "version": 2,
-      "refresh": "5s",
+      "version": 3,
+      "refresh": "30s",
       "panels": [
         {
           "type": "timeseries",
           "title": "Availability %",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "1 - (sum(rate(crp_requests_total{status!~\"5..\"}[2m])) / clamp_min(sum(rate(crp_requests_total[2m])), 1))",
               "refId": "A"
             }
@@ -28,8 +30,10 @@ data:
         {
           "type": "timeseries",
           "title": "Error Rate",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "sum(rate(crp_requests_total{status=~\"5..\"}[2m])) / clamp_min(sum(rate(crp_requests_total[2m])), 1)",
               "refId": "B"
             }
@@ -39,8 +43,10 @@ data:
         {
           "type": "timeseries",
           "title": "Latency p95",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "histogram_quantile(0.95, sum(rate(crp_request_duration_seconds_bucket[2m])) by (le))",
               "refId": "C"
             }

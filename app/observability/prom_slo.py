@@ -1,5 +1,7 @@
 import os
 import requests
+from app.observability.logger import get_logger
+logger = get_logger("crp.slo")
 
 PROM_URL = os.getenv(
     "PROM_URL",
@@ -24,7 +26,7 @@ def safe_query(promql: str):
         return float(value)
 
     except Exception as e:
-        print(f"SLO query failed: {e}")
+        logger.error("slo_query_failed", extra={"error": str(e), "query": promql})
         return 0.0
 
 

@@ -10,6 +10,8 @@ from app.observability.metrics import APP_INFO, SYSTEM_HEALTH
 
 from app.core.settings import settings
 
+from app.routes.reliability import router as reliability_router
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -26,6 +28,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(metrics_router)
     app.include_router(slo_router)
+    app.include_router(reliability_router)
 
     return app
 

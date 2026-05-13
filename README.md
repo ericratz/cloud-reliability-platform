@@ -1,6 +1,6 @@
-# Cloud Reliability Platform - 75% Complete
+# Cloud Reliability Platform - 90% Complete
 
-A cloud-native platform for testing system reliability, failure recovery, and observability under production-like conditions using Kubernetes on Azure. Simulates real-world distributed system behavior and validate reliability through metrics, SLOs, and controlled failure scenarios.
+A cloud-native platform for testing system reliability, failure recovery, and observability under production-like conditions using Kubernetes on Azure. Simulates real-world distributed system behavior and validates reliability through metrics, SLOs, controlled failure injection, and automated load testing.
 
 ## Stack
 - FastAPI - core API service
@@ -12,6 +12,8 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - GitHub Actions - CI/CD automation
 - Prometheus - metrics collection
 - Grafana - dashboards and visualization
+- Loki+Promtail - log aggregation
+- k6 - load testing
 - kubectl - cluster operations and debugging
 
 ## System Design
@@ -19,31 +21,40 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - Containers are built and pushed to ACR.
 - AKS pulls images from ACR and runs the application.
 - Terraform provisions Azure infrastructure.
-- GitHub Actions handles build, push, deployment automation.
-- Prometheus scrapes metrics from Kubernetes.
-- Grafana visualizes SLOs, latency, and error rates.
+- GitHub Actions handles build, push, deployment, and reliability validation.
+- Prometheus scrapes metrics from Kubernetes pods.
+- Grafana visualizes SLOs, latency, error rates, and logs.
+
+## API Endpoints
+- / - service index with links
+- /health -  health check with restart count, memory, disk, and SLO status.
+- /metrics - displays raw prometheus metrics
+- /slo - current SLO snapshot (availability, 500 errors, p95 latency)
+- /reliability/status - shows current injection state
+- POST /reliability/toggle-latency - injects 500ms latency
+- POST /reliability/toggle-errors - injects error log message on all requests
+- POST /reliability/trigger-error - injects one 500 error
+- /docs - Swagger UI
 
 ## SLOs (Service Level Objectives)
 - Service availability
 - Error rate (5xx tracking)
 - p95 latency
 
-## Reliability Design (In Progress)
+## Reliability Design
 - Kubernetes restart policies for failure recovery
 - Liveness/readiness probes
-- Controlled failure injection endpoints
-- Horizontal scaling via AKS
+- Controlled failure injection via API
 - Rolling deployments for zero-downtime updates
-- Load testing scripts
+- k6 load testing
+- CI/CD reliability gate
 
-## Observability (In Progress)
-- Prometheus for metrics - done
-- Grafana for metric visualization - done
-- Structured JSON logging
-- Request IDs for tracing
-- Kubernetes logs
-- Loki log aggregation
+## Observability
+- Prometheus scrapes metrics every 30s
+- Loki log aggregation with Promtail on all cluster nodes
+- Grafana dashboard for SLO and log visualization
+- Structured JSON logging on each request
 
 ## CI/CD
 - CI: Python env setup, dependency installation, FastAPI import validation
-- CD: Docker image build, push to ACR, Kubernetes deployment, rolling update verification
+- CD: Docker image build, push to ACR, Kubernetes deployment, rolling update verification, k6 reliability gate

@@ -54,3 +54,15 @@ jobs:
       - name: Verify rollout
         run: |
           kubectl rollout status deployment/crp
+
+      #install k6
+      - name: Install k6
+        run: |
+          curl https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz -L | tar xvz
+          sudo mv k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+
+      #run k6 reliability check
+      - name: Run k6 reliability check
+        run: |
+          EXTERNAL_IP=$(kubectl get svc crp -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          k6 run k6/load-test.js -e BASE_URL=http://$EXTERNAL_IP
