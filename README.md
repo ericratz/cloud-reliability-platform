@@ -1,4 +1,4 @@
-# Cloud Reliability Platform - 90% Complete
+# Cloud Reliability Platform
 
 A cloud-native platform for testing system reliability, failure recovery, and observability under production-like conditions using Kubernetes on Azure. Simulates real-world distributed system behavior and validates reliability through metrics, SLOs, controlled failure injection, and automated load testing.
 
@@ -10,6 +10,7 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - Azure Container Registry (ACR) - image registry
 - Azure Kubernetes Service (AKS) - cluster runtime
 - GitHub Actions - CI/CD automation
+- Helm - Kubernetes package manager
 - Prometheus - metrics collection
 - Grafana - dashboards and visualization
 - Loki+Promtail - log aggregation
@@ -22,8 +23,9 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - AKS pulls images from ACR and runs the application.
 - Terraform provisions Azure infrastructure.
 - GitHub Actions handles build, push, deployment, and reliability validation.
+- Helm manages Grafana, Prometheus, and Loki deployments via chart values.
 - Prometheus scrapes metrics from Kubernetes pods.
-- Grafana visualizes SLOs, latency, error rates, and logs.
+- Grafana visualizes SLOs, latency, error rates, and Loki logs.
 
 ## API Endpoints
 - / - service index with links
@@ -46,6 +48,8 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - Liveness/readiness probes
 - Controlled failure injection via API
 - Rolling deployments for zero-downtime updates
+- Horizontal Pod Autoscaling
+- Grafana customized alert rules based on SLOs
 - k6 load testing
 - CI/CD reliability gate
 
@@ -54,7 +58,8 @@ A cloud-native platform for testing system reliability, failure recovery, and ob
 - Loki log aggregation with Promtail on all cluster nodes
 - Grafana dashboard for SLO and log visualization
 - Structured JSON logging on each request
-- View dashboards: kubectl port-forward svc/grafana 3000:80
+- Access Grafana: kubectl port-forward svc/grafana 3000:80
+- Access Prometheus: kubectl port-forward svc/prometheus-server 9090:80
 
 ## CI/CD
 - CI: Python env setup, dependency installation, FastAPI import validation

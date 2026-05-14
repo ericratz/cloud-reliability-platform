@@ -33,7 +33,7 @@ def safe_query(promql: str):
 def get_availability():
     query = """
     1 - (
-        sum(rate(crp_requests_total{status!~"5.."}[2m]))
+        sum(rate(crp_requests_total{status=~"5.."}[2m]))
         /
         clamp_min(sum(rate(crp_requests_total[2m])), 1)
     )

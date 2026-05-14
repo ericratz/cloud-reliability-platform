@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crp-alert-rules
+  namespace: default
+  labels:
+    grafana_alert: "1"
+data:
+  crp-alerts.yaml: |
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: CRP
+        folder: CRP
+        interval: 1m
+        rules:
+          - uid: ffm2p3368cn40e
+            title: High Error Rate
+            condition: C
+            for: 1m
+            keep_firing_for: 2m
+            annotations:
+              summary: Error rate exceeded 5% SLO threshold
+            noDataState: NoData
+            execErrState: Error
+            isPaused: false
+            data:
+              - refId: A
+                relativeTimeRange:
+                  from: 600
+                  to: 0
+                datasourceUid: prometheus
+                model:
+                  editorMode: code
+                  expr: sum(rate(crp_requests_total{status=~"5.."}[2m])) / clamp_min(sum(rate(crp_requests_total[2m])), 1)
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  range: false
+                  refId: A
+              - refId: C
+                relativeTimeRange:
+                  from: 0
+                  to: 0
+                datasourceUid: __expr__
+                model:
+                  type: threshold
+                  expression: A
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: C
+                  conditions:
+                    - type: query
+                      evaluator:
+                        type: gt
+                        params: [0.05]
+                      operator:
+                        type: and
+                      query:
+                        params: [C]
+                      reducer:
+                        type: last
+                        params: []

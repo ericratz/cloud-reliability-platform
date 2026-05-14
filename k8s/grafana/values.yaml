@@ -34,3 +34,8 @@ sidecar:
     labelValue: "1"
     searchNamespace: ALL
     folder: /var/lib/grafana/dashboards
+  alerts:
+    enabled: true
+    label: grafana_alert
+    labelValue: "1"
+    searchNamespace: ALL

@@ -21,7 +21,7 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "prometheus" },
-              "expr": "1 - (sum(rate(crp_requests_total{status!~\"5..\"}[2m])) / clamp_min(sum(rate(crp_requests_total[2m])), 1))",
+              "expr": "1 - (sum(rate(crp_requests_total{status=~\"5..\"}[2m])) / clamp_min(sum(rate(crp_requests_total[2m])), 1))",
               "refId": "A"
             }
           ],

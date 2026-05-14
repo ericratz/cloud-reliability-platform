@@ -6,3 +6,9 @@ __pycache__
 .github
 terraform.tfstate
 terraform.tfstate.backup
+*.tfvars
+infra/
+k8s/
+k6/
+screenshots/
+.claude

@@ -6,6 +6,7 @@ from app.observability.prom_slo import get_error_rate, get_p95_latency
 
 router = APIRouter()
 
+#health thresholds
 MEMORY_WARN    = 70 #percent
 MEMORY_CRIT    = 90
 DISK_WARN      = 70
